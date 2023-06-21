@@ -25,5 +25,6 @@ plt.xlabel("DFT calculated energy")
 plt.ylabel("Linear regression prediction")
 plt.show()
 
-print(params)
-print(data_1)
+print('------------------------------------------\n')
+print("Model Parameters:", params)
+print('\n------------------------------------------')
