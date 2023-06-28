@@ -4,15 +4,16 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-data = pd.read_csv('EuTiO3-exchange-counting-5.6.csv')
+data = pd.read_csv('EuTiO3-exchange-counting-cubic.csv')
 data_1 = data.drop(labels=[11], axis=0) #chose which rows to drop
-exchange_coefficients = data_1[['J100 coeff double', 'J110 coeff double', 
-                                'J111 coeff double', 'e0 coeff']].to_numpy()
+exchange_coefficients = data_1[['J100 coeff double', 'J110 coeff double',
+                                'J111 coeff double','J200 coeff double']].to_numpy()
+
 free_energy = data_1['free energy'].to_numpy()
 free_energy_offset = np.zeros(shape=(len(free_energy)))
 estimate_offset = np.zeros(shape=(len(free_energy)))
 
-model = LinearRegression(fit_intercept=False).fit(exchange_coefficients, free_energy)
+model = LinearRegression().fit(exchange_coefficients, free_energy)
 params = model.coef_
 intercept = model.intercept_
 estimate = model.predict(exchange_coefficients)
@@ -36,4 +37,5 @@ plt.show()
 
 print('\n------------------------------------------\n')
 print("Model Parameters:", params)
+print("Paramagnetic Energy:", model.intercept_)
 print('\n------------------------------------------')
