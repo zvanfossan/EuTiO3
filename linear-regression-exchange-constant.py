@@ -18,12 +18,17 @@ intercept = model.intercept_
 estimate = model.predict(exchange_coefficients)
 
 min_energy_index = np.where(free_energy == min(free_energy))[0][0]
-free_energy_offset = np.zeros(shape=(len(free_energy)))
-estimate_offset = np.zeros(shape=(len(free_energy)))
+free_energy_offset = np.zeros(shape=len(free_energy))
+estimate_offset = np.zeros(shape=len(free_energy))
 for i in range(len(free_energy_offset)):
     free_energy_offset[i] = (free_energy[i] - min(free_energy))*10**3     #free energies with respect to minimum value
     estimate_offset[i] = (estimate[i] - estimate[min_energy_index])*10**3
 
+print('\n------------------------------------------\n')
+print("Model Parameters:", params)
+print("\nParamagnetic Energy:", model.intercept_)
+print('\nMinimum energy configuration:', configurations[min_energy_index])
+print('\n------------------------------------------\n')
 
 line_x = np.array([-1000,1000])
 line_y = np.array([-1000,1000])
@@ -35,9 +40,3 @@ plt.ylim(-1,max(free_energy_offset)+3)
 plt.xlabel("DFT calculated energy (meV)")
 plt.ylabel("Linear regression prediction (meV)")
 #plt.show()
-
-print('\n------------------------------------------\n')
-print("Model Parameters:", params)
-print("Paramagnetic Energy:", model.intercept_)
-print('\n------------------------------------------')
-print('Minimum energy configuration:', configurations[min_energy_index])
