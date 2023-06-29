@@ -4,38 +4,40 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-data = pd.read_csv('EuTiO3-exchange-counting-cubic.csv')
-data_1 = data.drop(labels=[11], axis=0) #chose which rows to drop
+data = pd.read_csv('EuTiO3-exchange-counting-a0a0c-.csv')
+data_1 = data.drop(labels=[1], axis=0) #choose which rows to drop
+
 exchange_coefficients = data_1[['J100 coeff double', 'J110 coeff double',
                                 'J111 coeff double','J200 coeff double']].to_numpy()
-
 free_energy = data_1['free energy'].to_numpy()
-free_energy_offset = np.zeros(shape=(len(free_energy)))
-estimate_offset = np.zeros(shape=(len(free_energy)))
+configurations = data_1['Configuration'].to_numpy()
 
 model = LinearRegression().fit(exchange_coefficients, free_energy)
 params = model.coef_
 intercept = model.intercept_
 estimate = model.predict(exchange_coefficients)
 
+min_energy_index = np.where(free_energy == min(free_energy))[0][0]
+free_energy_offset = np.zeros(shape=(len(free_energy)))
+estimate_offset = np.zeros(shape=(len(free_energy)))
+for i in range(len(free_energy_offset)):
+    free_energy_offset[i] = (free_energy[i] - min(free_energy))*10**3     #free energies with respect to minimum value
+    estimate_offset[i] = (estimate[i] - estimate[min_energy_index])*10**3
+
+
 line_x = np.array([-1000,1000])
 line_y = np.array([-1000,1000])
-
-for i in range(len(free_energy_offset)):
-    free_energy_offset[i] = (free_energy[i] - free_energy[len(free_energy)-2])*10**3 #choose which row to base free energies on
-    estimate_offset[i] = (estimate[i] - estimate[len(estimate)-2])*10**3
-
 plt.plot(free_energy_offset, estimate_offset, linestyle = 'none', marker = 'o')
 plt.plot(line_x,line_y,linestyle = 'dashed', linewidth = '1', color = 'black')
 plt.ticklabel_format(style='sci', useOffset=False)
-plt.xlim(-1,20)
-plt.ylim(-1,20)
+plt.xlim(-1,max(free_energy_offset)+3)
+plt.ylim(-1,max(free_energy_offset)+3)
 plt.xlabel("DFT calculated energy (meV)")
 plt.ylabel("Linear regression prediction (meV)")
-plt.show()
-
+#plt.show()
 
 print('\n------------------------------------------\n')
 print("Model Parameters:", params)
 print("Paramagnetic Energy:", model.intercept_)
 print('\n------------------------------------------')
+print('Minimum energy configuration:', configurations[min_energy_index])
