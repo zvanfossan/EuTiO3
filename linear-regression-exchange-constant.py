@@ -4,12 +4,12 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-data = pd.read_excel('EuTiO3-exchange-counting-a+c-c-.xlsx')
+data = pd.read_excel('EuTiO3-exchange-counting-a0a0c+.xlsx')
 data_1 = data.drop(labels=[], axis=0) #choose which rows to drop
 
 exchange_coefficients = data_1[['J100 coeff double', 'J110 coeff double',
-                                'J111 coeff double','J200 coeff double']].to_numpy()
-free_energy = data_1['free energy'].to_numpy()
+                                'J111 coeff double']].to_numpy()
+free_energy = data_1['free energy (encut 800)'].to_numpy() #choose free energy
 configurations = data_1['Configuration'].to_numpy()
 
 model = LinearRegression().fit(exchange_coefficients, free_energy)
@@ -38,6 +38,7 @@ print("\nParamagnetic Energy:", model.intercept_)
 print('\nMinimum energy configuration:', configurations[min_energy_index])
 print('\nOutlier configurations: ',outlier_configurations)
 print('\nOutlier configuration indices: ',outlier_configuration_indices)
+print('\n', free_energy)
 print('\n------------------------------------------\n')
 
 line_x = np.array([-1000,1000])
@@ -45,8 +46,8 @@ line_y = np.array([-1000,1000])
 plt.plot(free_energy_offset, estimate_offset, linestyle = 'none', marker = 'o')
 plt.plot(line_x,line_y,linestyle = 'dashed', linewidth = '1', color = 'black')
 plt.ticklabel_format(style='sci', useOffset=False)
-plt.xlim(-5,max(free_energy_offset)+8)
-plt.ylim(-5,max(free_energy_offset)+8)
+plt.xlim(-1,max(free_energy_offset)+3)
+plt.ylim(-1,max(free_energy_offset)+3)
 plt.xlabel("DFT calculated energy (meV)")
 plt.ylabel("Linear regression prediction (meV)")
 plt.show()
