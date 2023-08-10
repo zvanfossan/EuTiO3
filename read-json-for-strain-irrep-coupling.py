@@ -34,9 +34,6 @@ desired_column_order = [str(value) for value in desired_column_order]
 df = df[desired_column_order]
 df.sort_index(inplace=True)
 
-print(desired_column_order)
-print(df.index)
-print(df.shape) 
 
 exchange_data = {}
 for column in df:
@@ -51,8 +48,8 @@ for column in df:
             energies = energies.reindex(desired_row_order)
             energies = energies.drop(labels=['4_atom_5'],axis=0) #drop specific configurations from dataset
 
-            y = energies.to_numpy()
-            y = np.nan_to_num(y)
+            y = energies['free energy'].values
+
             fit = model.fit(X,y)
             model_parameters = model.coef_
             model_parameters = model_parameters.reshape(-1)
@@ -64,11 +61,11 @@ for column in df:
 
             exchange_data[column][strain]['values'] = {}
             exchange_data[column][strain]['values']['J1xy'] = model_parameters[0]
-            exchange_data[column][strain]['values']['J1z'] = model_parameters[0]
+            exchange_data[column][strain]['values']['J1z'] = model_parameters[1]
             exchange_data[column][strain]['values']['J2xy'] = model_parameters[2]
             exchange_data[column][strain]['values']['J2z'] = model_parameters[3]
             exchange_data[column][strain]['values']['J3'] = model_parameters[4]
-            exchange_data[column][strain]['values']['paramagnetic energy'] = paramagnetic_energy
+            exchange_data[column][strain]['values']['paramagnetic-energy'] = paramagnetic_energy
 
             exchange_data[column][strain]['error'] = {}
             exchange_data[column][strain]['error']['J1xy'] = standard_error[0]
@@ -79,8 +76,6 @@ for column in df:
 
             exchange_data[column][strain]['R-square'] = score
 
-
-
 DATA_DIR = './'
 fjson = os.path.join(DATA_DIR, "exchange-data.json")
 
@@ -90,8 +85,6 @@ def write_json(d,fjson):
         return d
 
 write_json(exchange_data, fjson)
-
-
         
 
 
