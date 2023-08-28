@@ -4,17 +4,17 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-data = pd.read_excel('data/EuTiO3-exchange-counting-cubic.xlsx')
-data_1 = data.drop(labels=[11], axis=0) #choose which rows to drop
+data = pd.read_excel('data/EuTiO3-a0a0c+-free-energy-angle0.01-vasp6.xlsx')
+data_1 = data.drop(labels=[], axis=0) #choose which rows to drop
 
 #exchange_coefficients = data_1[['J100 coeff double', 'J110 coeff double',
 #                                'J111 coeff double']].to_numpy()
-exchange_coefficients = data_1[['J1xy', 'J1z', 'J2xy',
-                                'J2z', 'J3']].to_numpy()
+exchange_coefficients = data_1[['J1xy (tetragonal)', 'J1z (tetragonal)', 'J2xy (tetragonal)',
+                                'J2z (tetragonal)', 'J3 (tetragonal)']].to_numpy()
 
 
-free_energy = data_1['free energy (Ti_sv)'].to_numpy() #choose free energy
-configurations = data_1['Configuration'].to_numpy()
+free_energy = data_1['free energy'].to_numpy() #choose free energy
+configurations = data_1['configuration'].to_numpy()
 
 model = LinearRegression().fit(exchange_coefficients, free_energy)
 params = model.coef_
