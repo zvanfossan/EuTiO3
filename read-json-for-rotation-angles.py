@@ -42,8 +42,8 @@ desired_column_order[0] = format(desired_column_order[0], '.2f')
 desired_column_order = [str(value) for value in desired_column_order]
 df = df[desired_column_order]
 
-df = df.drop(labels=[], axis=0) #drop specific configurations from dataset
-nearest_neigbors_df = nearest_neigbors_df.drop(labels=[],axis=0) #drop specific configurations from dataset
+df = df.drop(labels=['4_atom_5'], axis=0) #drop specific configurations from dataset
+nearest_neigbors_df = nearest_neigbors_df.drop(labels=[11],axis=0) #drop specific configurations from dataset
 print(df)
 print(nearest_neigbors_df.head())
 
@@ -59,6 +59,8 @@ j2xyerror = []
 j2zerror = []
 j3error = []
 angle = []
+paramag_energy = []
+r_square = []
 model = LinearRegression()
 
 for rotation_angle in df.columns.tolist():
@@ -100,6 +102,8 @@ for rotation_angle in df.columns.tolist():
       j2zerror.append(standard_error[3])
       j3error.append(standard_error[4])
       angle.append(rotation_angle)
+      paramag_energy.append(paramagnetic_energy)
+      r_square.append(score)
 
       #parity plot data formatting 
       minimum_energy_index = np.where(y == min(y))[0][0]
@@ -133,6 +137,31 @@ plt.ylabel('Exchange value')
 plt.show()
 
 print(j1zerror)
+
+exchange_value_data = {}
+exchange_value_data['angles'] = angle
+exchange_value_data['J1xy'] = j1xy
+exchange_value_data['J1xy error'] = j1xyerror
+exchange_value_data['J1z'] = j1z
+exchange_value_data['J1z error'] = j1zerror
+exchange_value_data['J2xy'] = j2xy
+exchange_value_data['J2xy error'] = j2xyerror
+exchange_value_data['J2z'] = j2z
+exchange_value_data['J2z error'] = j2zerror
+exchange_value_data['J3'] = j3
+exchange_value_data['J3 error'] = j3error
+exchange_value_data['score'] = r_square
+exchange_value_data['Paramagnetic Energy'] = paramag_energy
+
+#DATA_DIR = './'
+#fjson = os.path.join(DATA_DIR, "exchange-data.json")
+
+#def write_json(d,fjson):
+#        with open(fjson, "w") as f:
+#                json.dump(d,f)
+#        return d
+
+#write_json(exchange_value_data, fjson)
 
 
 
