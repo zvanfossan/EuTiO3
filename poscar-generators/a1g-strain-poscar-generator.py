@@ -16,7 +16,7 @@ for line in lines:
     if read_coordinates:
         coords = [float(coord) for coord in line.split()]
         coordinates.extend(coords)
-    if line.strip() == "Direct":
+    if line.strip() == "direct":
         read_coordinates = True
 
 # Convert the coordinates to a numpy array
